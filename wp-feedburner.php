@@ -1,11 +1,11 @@
 <?php
 /*
-Plugin Name: FeedBurner FeedSmith
-Plugin URI: http://www.feedburner.com/fb/a/help/wordpress_quickstart
-Description: Originally authored by <a href="http://www.orderedlist.com/">Steve Smith</a>, this plugin detects all ways to access your original WordPress feeds and redirects them to your FeedBurner feed so you can track every possible subscriber. 
-Author: FeedBurner
-Author URI: http://www.feedburner.com
-Version: 2.3.1
+Plugin Name: FeedBurner
+Plugin URI: https://github.com/turadg/wp-feedburner
+Description: Detects all ways to access your original WordPress feeds and redirects them to your FeedBurner feed so you can track every possible subscriber. Originally authored by <a href="http://www.orderedlist.com/">Steve Smith</a>. Categories added by <a href="http://interfacelab.com/feedburner-wp-plugin-fix/">InterfaceLab</a>.
+Author: Turadg Aleahmad
+Author URI: http://turadg.aleahmad.net/
+Version: 2.4.0 beta 1
 */
 
 $category_count=10;
@@ -25,7 +25,7 @@ function ol_is_authorized() {
 		return $user_level > 5;
 	}
 }
-								
+
 add_option('feedburner_settings',$data,'FeedBurner Feed Replacement Options');
 
 $feedburner_settings = get_option('feedburner_settings');
