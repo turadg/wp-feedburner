@@ -62,57 +62,56 @@ function ol_feedburner_options_subpanel() {
 	global $ol_flash, $feedburner_settings, $_POST, $wp_rewrite, $category_count;
 	$cats=get_categories();
 
-	if (ol_is_authorized()) {
+	if (!ol_is_authorized()) {
+	  echo '<div class="wrap"><p>Sorry, you are not allowed to access this page.</p></div>';
+		return;
+	}
 		
-		$updates_cats=array();
+	$updates_cats=array();
+	
+	foreach($cats as $cat)
+	{
+		$field='feedburner_category_'.$cat->slug;
 		
-		foreach($cats as $cat)
-		{
-			$field='feedburner_category_'.$cat->slug;
-			
-			if (isset($_POST[$field]))
-				$updated_cats[$field]=$_POST[$field];
-		}
-		
-		// Easiest test to see if we have been submitted to
-		if(isset($_POST['feedburner_url']) || isset($_POST['feedburner_comments_url']) || (count($updated_cats)>0)) {
-			// Now we check the hash, to make sure we are not getting CSRF
-			if(fb_is_hash_valid($_POST['token'])) {
+		if (isset($_POST[$field]))
+			$updated_cats[$field]=$_POST[$field];
+	}
+	
+	// Easiest test to see if we have been submitted to
+	if(isset($_POST['feedburner_url']) || isset($_POST['feedburner_comments_url']) || (count($updated_cats)>0)) {
+		// Now we check the hash, to make sure we are not getting CSRF
+		if (fb_is_hash_valid($_POST['token'])) {
 
-				// update the category feeds
-				if (count($updated_cats)>0)
-					foreach($updated_cats as $key=>$val)
-					{
-						$feedburner_settings[$key] = $val;
-						update_option('feedburner_settings',$feedburner_settings);
-						$ol_flash = "Your settings have been saved.";
-					}
-					
-				if (isset($_POST['feedburner_url'])) { 
-					$feedburner_settings['feedburner_url'] = $_POST['feedburner_url'];
+			// update the category feeds
+			if (count($updated_cats)>0)
+				foreach($updated_cats as $key=>$val)
+				{
+					$feedburner_settings[$key] = $val;
 					update_option('feedburner_settings',$feedburner_settings);
 					$ol_flash = "Your settings have been saved.";
 				}
-				if (isset($_POST['feedburner_comments_url'])) { 
-					$feedburner_settings['feedburner_comments_url'] = $_POST['feedburner_comments_url'];
-					update_option('feedburner_settings',$feedburner_settings);
-					$ol_flash = "Your settings have been saved.";
-				} 
-			} else {
-				// Invalid form hash, possible CSRF attempt
-				$ol_flash = "Security hash missing.";
-			} // endif fb_is_hash_valid
-		} // endif isset(feedburner_url)
-	} else {
-		$ol_flash = "You don't have enough access rights.";
-	}
+				
+			if (isset($_POST['feedburner_url'])) { 
+				$feedburner_settings['feedburner_url'] = $_POST['feedburner_url'];
+				update_option('feedburner_settings',$feedburner_settings);
+				$ol_flash = "Your settings have been saved.";
+			}
+			if (isset($_POST['feedburner_comments_url'])) { 
+				$feedburner_settings['feedburner_comments_url'] = $_POST['feedburner_comments_url'];
+				update_option('feedburner_settings',$feedburner_settings);
+				$ol_flash = "Your settings have been saved.";
+			} 
+		} else {
+			// Invalid form hash, possible CSRF attempt
+			$ol_flash = "Security hash missing.";
+		} // endif fb_is_hash_valid
+	} // endif isset(feedburner_url)
 	
 	if ($ol_flash != '') echo '<div id="message" class="updated fade"><p>' . $ol_flash . '</p></div>';
 	
-	if (ol_is_authorized()) {
-		$temp_hash = fb_generate_hash();
-		fb_store_hash($temp_hash);
-		?>
+	$temp_hash = fb_generate_hash();
+	fb_store_hash($temp_hash);
+	?>
 <div class="wrap">
 <h2>Set Up Your FeedBurner Feed</h2>
 <p>This plugin makes it easy to redirect 100% of traffic for your feeds to a FeedBurner feed you have created. FeedBurner can then track all of your feed subscriber traffic and usage and apply a variety of features you choose to improve and enhance your original WordPress feed.</p>
@@ -124,16 +123,13 @@ function ol_feedburner_options_subpanel() {
 <li>Once you have created your FeedBurner feed, enter its address into the field below (http://feeds.feedburner.com/yourfeed):<br/>
 <input type="text" name="feedburner_url" value="<?=htmlentities($feedburner_settings['feedburner_url'])?>" size="45" />
 </li>
-    <?
-		foreach($cats as $cat)
-			echo "<li><strong>$cat->name</strong> Feed:<br/><input type=\"text\" name=\"feedburner_category_$cat->slug\" value=\"" . htmlentities($feedburner_settings['feedburner_category_'.$cat->slug]) . "\" size=\"45\" /></li>";
-		echo '<li>Optional: If you also want to handle your WordPress comments feed using FeedBurner, <a href="https://www.feedburner.com/fb/a/addfeed?sourceUrl=' . get_bloginfo('url') . '/wp-commentsrss2.php" target="_blank">create a FeedBurner comments feed</a> and then enter its address below:<br/><input type="text" name="feedburner_comments_url" value="' . htmlentities($feedburner_settings['feedburner_comments_url']) . '" size="45" />
-		</ol>
-		<p><input type="submit" value="Save" /></p></form>';
-		echo '</div>';
-	} else {
-		echo '<div class="wrap"><p>Sorry, you are not allowed to access this page.</p></div>';
-	}
+  <?
+	foreach($cats as $cat)
+		echo "<li><strong>$cat->name</strong> Feed:<br/><input type=\"text\" name=\"feedburner_category_$cat->slug\" value=\"" . htmlentities($feedburner_settings['feedburner_category_'.$cat->slug]) . "\" size=\"45\" /></li>";
+	echo '<li>Optional: If you also want to handle your WordPress comments feed using FeedBurner, <a href="https://www.feedburner.com/fb/a/addfeed?sourceUrl=' . get_bloginfo('url') . '/wp-commentsrss2.php" target="_blank">create a FeedBurner comments feed</a> and then enter its address below:<br/><input type="text" name="feedburner_comments_url" value="' . htmlentities($feedburner_settings['feedburner_comments_url']) . '" size="45" />
+	</ol>
+	<p><input type="submit" value="Save" /></p></form>';
+	echo '</div>';
 
 }
 
