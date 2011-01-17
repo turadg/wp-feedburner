@@ -112,16 +112,19 @@ function ol_feedburner_options_subpanel() {
 	if (ol_is_authorized()) {
 		$temp_hash = fb_generate_hash();
 		fb_store_hash($temp_hash);
-		echo '<div class="wrap">';
-		echo '<h2>Set Up Your FeedBurner Feed</h2>';
-		echo '<p>This plugin makes it easy to redirect 100% of traffic for your feeds to a FeedBurner feed you have created. FeedBurner can then track all of your feed subscriber traffic and usage and apply a variety of features you choose to improve and enhance your original WordPress feed.</p>
-		<form action="" method="post">
-		<input type="hidden" name="redirect" value="true" />
-		<input type="hidden" name="token" value="' . fb_retrieve_hash() . '" />
-		<ol>
-		<li>To get started, <a href="https://www.feedburner.com/fb/a/addfeed?sourceUrl=' . get_bloginfo('url') . '" target="_blank">create a FeedBurner feed for ' . get_bloginfo('name') . '</a>. This feed will handle all traffic for your posts.</li>
-		<li>Once you have created your FeedBurner feed, enter its address into the field below (http://feeds.feedburner.com/yourfeed):<br/><input type="text" name="feedburner_url" value="' . htmlentities($feedburner_settings['feedburner_url']) . '" size="45" /></li>
-		';
+		?>
+<div class="wrap">
+<h2>Set Up Your FeedBurner Feed</h2>
+<p>This plugin makes it easy to redirect 100% of traffic for your feeds to a FeedBurner feed you have created. FeedBurner can then track all of your feed subscriber traffic and usage and apply a variety of features you choose to improve and enhance your original WordPress feed.</p>
+<form action="" method="post">
+<input type="hidden" name="redirect" value="true" />
+<input type="hidden" name="token" value="<?=fb_retrieve_hash()?>" />
+<ol>
+<li>To get started, <a href="http://feedburner.google.com/fb/a/myfeeds" target="_blank">create a FeedBurner feed</a> for <tt><?=get_bloginfo('name')?></tt>. This feed will handle all traffic for your posts.</li>
+<li>Once you have created your FeedBurner feed, enter its address into the field below (http://feeds.feedburner.com/yourfeed):<br/>
+<input type="text" name="feedburner_url" value="<?=htmlentities($feedburner_settings['feedburner_url'])?>" size="45" />
+</li>
+    <?
 		foreach($cats as $cat)
 			echo "<li><strong>$cat->name</strong> Feed:<br/><input type=\"text\" name=\"feedburner_category_$cat->slug\" value=\"" . htmlentities($feedburner_settings['feedburner_category_'.$cat->slug]) . "\" size=\"45\" /></li>";
 		echo '<li>Optional: If you also want to handle your WordPress comments feed using FeedBurner, <a href="https://www.feedburner.com/fb/a/addfeed?sourceUrl=' . get_bloginfo('url') . '/wp-commentsrss2.php" target="_blank">create a FeedBurner comments feed</a> and then enter its address below:<br/><input type="text" name="feedburner_comments_url" value="' . htmlentities($feedburner_settings['feedburner_comments_url']) . '" size="45" />
