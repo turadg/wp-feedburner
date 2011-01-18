@@ -187,4 +187,17 @@ if (!preg_match("/feedburner|feedvalidator/i", $_SERVER['HTTP_USER_AGENT'])) {
 
 add_action('admin_menu', 'ol_add_feedburner_options_page');
 
+/* Subscription Widget */
+
+/* Add our function to the widgets_init hook. */
+add_action( 'widgets_init', 'feedburner_loadwidgets' );
+
+/* Function that registers our widget. */
+function feedburner_loadwidgets() {
+  require_once('widgets/feedburner_subscribe_widget.php');
+	register_widget( 'FeedBurner_Subscribe_Widget' );
+}
+
+
+
 ?>
